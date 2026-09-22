@@ -1,0 +1,159 @@
+{
+  "experiment": 275340,
+  "name": "Khalid Study",
+  "requirements": {
+    "computer_only": true
+  },
+  "before_branch": [
+    {
+      "node": "questionnaire-ce4m",
+      "kind": "questionnaire",
+      "slug": "information-sheet",
+      "label": "Information sheet - LexEn (Clone)"
+    },
+    {
+      "node": "questionnaire-lh3y",
+      "kind": "questionnaire",
+      "slug": "consent",
+      "label": "Consent form (Clone)"
+    },
+    {
+      "node": "questionnaire-iayk",
+      "kind": "questionnaire",
+      "slug": "initial",
+      "label": "Questionnaire-Initial"
+    },
+    {
+      "node": "questionnaire-snii",
+      "kind": "questionnaire",
+      "slug": "handedness",
+      "label": "Handedness (Clone)"
+    }
+  ],
+  "branch": {
+    "property": "handedness",
+    "arms": {
+      "left": {
+        "value": "Left",
+        "default": false,
+        "chain": [
+          {
+            "node": "task-etpq",
+            "kind": "task",
+            "slug": "lexen-fair-left",
+            "label": "LexEn Fair - Left"
+          },
+          {
+            "node": "questionnaire-ray8",
+            "kind": "questionnaire",
+            "slug": "progress-1",
+            "label": "1 out 5"
+          },
+          {
+            "node": "task-npav",
+            "kind": "task",
+            "slug": "lexen-irt-left",
+            "label": "LexEn IRT - Left"
+          },
+          {
+            "node": "questionnaire-uo52",
+            "kind": "questionnaire",
+            "slug": "progress-2",
+            "label": "2 out 5"
+          },
+          {
+            "node": "task-7x58",
+            "kind": "task",
+            "slug": "lexen-triple-left",
+            "label": "LexEn Triple - Left"
+          },
+          {
+            "node": "questionnaire-8v33",
+            "kind": "questionnaire",
+            "slug": "progress-3",
+            "label": "3 out 5"
+          }
+        ]
+      },
+      "right": {
+        "value": "Right",
+        "default": true,
+        "chain": [
+          {
+            "node": "task-mczs",
+            "kind": "task",
+            "slug": "lexen-fair-right",
+            "label": "LexEn Fair - Right"
+          },
+          {
+            "node": "questionnaire-xwz6",
+            "kind": "questionnaire",
+            "slug": "progress-1",
+            "label": "1 out 5"
+          },
+          {
+            "node": "task-xnxn",
+            "kind": "task",
+            "slug": "lexen-irt-right",
+            "label": "LexEn IRT - Right"
+          },
+          {
+            "node": "questionnaire-pxt2",
+            "kind": "questionnaire",
+            "slug": "progress-2",
+            "label": "2 out 5"
+          },
+          {
+            "node": "task-9heh",
+            "kind": "task",
+            "slug": "lexen-triple-right",
+            "label": "LexEn Triple - Right"
+          },
+          {
+            "node": "questionnaire-pngw",
+            "kind": "questionnaire",
+            "slug": "progress-3",
+            "label": "3 out 5"
+          }
+        ]
+      }
+    }
+  },
+  "after_branch": [
+    {
+      "node": "questionnaire-rs5p",
+      "kind": "questionnaire",
+      "slug": "oqpt",
+      "label": "OQPT (Clone)"
+    },
+    {
+      "node": "questionnaire-dj63",
+      "kind": "questionnaire",
+      "slug": "progress-4",
+      "label": "4 out 5"
+    },
+    {
+      "node": "task-zrg7",
+      "kind": "task",
+      "slug": "lextale",
+      "label": "LexTALE_New Version (items included)"
+    },
+    {
+      "node": "questionnaire-pne5",
+      "kind": "questionnaire",
+      "slug": "progress-5",
+      "label": "5 out 5"
+    },
+    {
+      "node": "questionnaire-rr2d",
+      "kind": "questionnaire",
+      "slug": "comment-box",
+      "label": "Questionnaire_comment box"
+    },
+    {
+      "node": "finish",
+      "kind": "finish",
+      "label": "Finish"
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+@import url("fonts.css");
+/* ---------------------------------------------------------------------
+   Khalid Study — participant styles.
+
+   Deliberately plain. Gorilla's own participant view is a white page with
+   a centred column and no decoration, and every screen's HTML carries its
+   own sizing (font-size: 150%, 200%, 300%) straight from the task
+   definition. The job here is to get out of the way and let that render
+   as it does in Gorilla, not to restyle the study.
+   --------------------------------------------------------------------- */
+:root{
+  /* ---- deliberate departures from Gorilla, set by the researcher ----
+     Gorilla's own rendering is --type-scale:1 and --btn-w/--btn-h:100%.
+     These were raised because the stimulus text read small and the
+     response buttons filled the foot of the frame. Set them back to the
+     Gorilla values if you ever need a pixel-faithful run. */
+  --type-scale:1.35;      /* all content text, incl. instructions */
+  --btn-w:46%;            /* response button width, share of its zone */
+  --btn-h:58%;            /* response button height, share of its zone */
+  --btn-font:1.5em;       /* button label; Gorilla uses a fixed 14px */
+
+  --ink:#1a1a1a;
+  --paper:#fff;
+  --muted:#5b6570;
+  --line:#c9d1d9;
+  --edge:#6b7480;
+  --accent:#1665c1;        /* Gorilla's participant button blue */
+  --accent-ink:#fff;
+  --good:#1d7a3f;
+  --bad:#b42318;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font:14px/1.43 "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---- the stage ------------------------------------------------------
+   Gorilla does not render a task full-bleed: it fits a 4:3 frame inside
+   the window, centres it, and positions zones by percentage within THAT.
+   Type scales with the frame — a 900px-tall frame gives a 12px base, so
+   the task's own "font-size: 150%" resolves to 18px, which is exactly
+   what Gorilla computes. Everything below is in em of that base, so the
+   whole screen scales together as the window changes.
+   --------------------------------------------------------------------- */
+#stage{position:fixed; inset:0; display:none; align-items:center; justify-content:center}
+#stage.on{display:flex}
+#frame{
+  position:relative;
+  height:min(100vh, 75vw);
+  width:min(133.3333vh, 100vw);
+  /* 12px at a 900px-tall frame, times the researcher's type scale. */
+  font-size:calc(min(100vh, 75vw) / 75 * var(--type-scale));
+  line-height:1.5;
+}
+.zone{position:absolute; display:flex; align-items:center; justify-content:center}
+/* Content sits in a column two thirds of the zone's width, centred —
+   measured in Gorilla as an 800px box inside a 1200px zone. */
+.zone > .inner{width:66.6667%; margin:0 auto}
+.zone.tight > .inner{width:100%}
+.zone h1{font-size:2.6667em; line-height:1.09; margin:0 0 .5em; font-weight:500}
+/* The stimulus: 36px at a 900px frame, with Gorilla's tightened tracking. */
+.zone.text-zone{font-size:3em; line-height:1.1; text-align:center; letter-spacing:-0.0556em}
+.zone p{margin:0 0 .4em}
+.zone p:last-child{margin-bottom:0}
+
+/* fixation cross and stimulus share one box so nothing shifts at onset */
+#fixation{font-size:3em; line-height:1.1; letter-spacing:-0.0556em}
+
+.countdown{font-size:3em; font-weight:600; text-align:center; line-height:1}
+
+.fb{font-size:2.5em; font-weight:600; text-align:center}
+.fb.good{color:var(--good)}
+.fb.bad{color:var(--bad)}
+
+/* ---- the page: questionnaires and any non-stage screen ---- */
+#page{display:none; min-height:100%; justify-content:center; padding:40px 20px 64px}
+#page.on{display:flex}
+#page > .col{width:100%; max-width:820px}
+
+h1,h2,h3,h4{line-height:1.25; margin:0 0 .5em}
+h4{font-size:19px}
+p{margin:0 0 1em; max-width:none}
+strong{font-weight:700}
+
+.q{margin:0 0 28px; padding:0 0 22px; border-bottom:1px solid var(--line)}
+.q:last-of-type{border-bottom:0}
+.q .label{font-weight:600; margin:0 0 12px}
+.q .label .req{color:var(--bad); margin-left:4px}
+.opts{display:flex; flex-direction:column; gap:10px}
+label.opt{display:flex; gap:10px; align-items:flex-start; cursor:pointer; padding:4px 0}
+input[type=radio],input[type=checkbox]{width:20px; height:20px; margin:1px 0 0; flex:0 0 auto; cursor:pointer}
+input[type=text],textarea{
+  font:inherit; width:100%; max-width:520px; padding:10px 12px;
+  border:1px solid var(--edge); border-radius:6px; background:#fff; color:var(--ink);
+}
+textarea{max-width:100%; resize:vertical}
+
+table.grid{border-collapse:collapse; width:100%; font-size:16px}
+table.grid th,table.grid td{border:1px solid var(--line); padding:8px 10px; text-align:center}
+table.grid th:first-child,table.grid td:first-child{text-align:left}
+table.grid thead th{background:#f4f6f8; font-weight:600}
+
+button{
+  font:inherit; font-weight:600; padding:12px 26px; min-height:46px;
+  border-radius:6px; border:1px solid transparent;
+  background:var(--accent); color:var(--accent-ink); cursor:pointer;
+}
+
+/* ---- response buttons -----------------------------------------------
+   Gorilla's response buttons FILL their zone: on LexTALE the yes/no pair
+   are two 600x180 slabs across the foot of the frame. Measured: #555 on
+   #555 with a 2px border, 4px radius, 10px padding, white label. The box
+   scales with the frame but the label does NOT — it stays 14px at every
+   frame size, unlike content text, because Gorilla does not run its
+   fit-text pass over these.
+   --------------------------------------------------------------------- */
+.zone button.resp{
+  width:var(--btn-w); height:var(--btn-h); padding:10px; margin:0;
+  font-size:var(--btn-font); font-weight:400; line-height:1.3; font-family:inherit;
+  background:#555; color:#fff; border:2px solid #555; border-radius:4px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.zone button.resp:hover{filter:none}
+
+/* ---- progress bar ----------------------------------------------------
+   A zone, not page chrome: a 40px wrapper centred in the zone holding a
+   20px track. Both heights are fixed, like the buttons. */
+.zone .pbar{width:100%; height:40px; display:flex; align-items:center}
+.zone .pbar .track{
+  width:100%; height:20px; background:#f5f5f5; border-radius:4px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.1); overflow:hidden;
+}
+.zone .pbar .fill{
+  height:100%; width:0; background:#0068ff;
+  box-shadow:inset 0 -1px 0 rgba(0,0,0,.15);
+}
+.zone .pbar .fill.green{background:#5cb85c}
+button.ghost{background:#fff; color:var(--ink); border-color:var(--edge)}
+button:disabled{opacity:1; background:#fff; color:var(--muted); border-color:var(--line); cursor:default}
+button:hover:not(:disabled){filter:brightness(1.07)}
+:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
+
+.actions{display:flex; gap:12px; align-items:center; margin:28px 0 0}
+.err{color:var(--bad); font-weight:600; margin:14px 0 0}
+.note{color:var(--muted); font-size:15px; margin:18px 0 0}
+
+/* ---- progress bar: Gorilla draws it at the top of the screen ---- */
+#progress{position:fixed; top:0; left:0; right:0; height:10px; background:#e6e9ec; display:none; z-index:20}
+#progress.on{display:block}
+#progress > span{display:block; height:100%; width:0; background:var(--good)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+
+/* ---- sliders: Gorilla shows end labels and the live value ---- */
+.slider{display:flex; align-items:center; gap:14px; max-width:620px}
+.slider input[type=range]{flex:1; min-width:160px; height:28px}
+.slider .end{color:var(--muted); font-size:15px; white-space:nowrap}
+output.val{display:inline-block; margin:8px 0 0; font-weight:600}
+
+/* ---- preview-mode index ---- */
+#page ul{margin:0 0 1em; padding-left:22px}
+#page li{margin:6px 0}
+#page a{color:var(--accent)}
+code{font:15px/1 ui-monospace,SFMono-Regular,Menlo,monospace; background:#f2f4f7;
+     border:1px solid var(--line); border-radius:4px; padding:2px 6px}
+
+/* ---- preview contents page ---- */
+table.tasks{border-collapse:collapse; width:100%; margin:18px 0 8px; font-size:16px}
+table.tasks th,table.tasks td{border-bottom:1px solid var(--line); padding:11px 12px; text-align:left}
+table.tasks thead th{border-bottom:2px solid var(--edge); font-size:14px; color:var(--muted);
+  font-weight:600; letter-spacing:.02em}
+table.tasks .num{text-align:right; font-variant-numeric:tabular-nums}
+table.tasks a{color:var(--accent); text-decoration:none}
+table.tasks a:hover{text-decoration:underline}
+table.tasks kbd{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  background:#f2f4f7; border:1px solid var(--line); border-bottom-width:2px;
+  border-radius:4px; padding:3px 6px}
