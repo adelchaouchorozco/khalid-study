@@ -22,12 +22,13 @@
    code and the generated task data aggressively; a participant running a
    stale mixture of the two is the kind of bug that is invisible until the
    data comes back wrong. */
-const ASSET_VERSION = "2026-09-21c";
+const ASSET_VERSION = "2026-09-24a";
 
 const CFG = {
-  /* Where the data goes. DataPipe (pipe.jspsych.org) writes straight into
-     an OSF component and costs nothing. Empty = local download only. */
-  DATAPIPE_ID: "",
+  /* Where the data goes. DataPipe (pipe.jspsych.org) writes each snapshot
+     into a folder in your Google Drive and costs nothing. (It used to write
+     to OSF; OSF support ends 16 November 2026.) Empty = local download only. */
+  DATAPIPE_ID: "93ZZudMPGhHX",
 
   /* Second sink: a Cloudflare Worker that mirrors every snapshot to R2 and
      answers "has this participant already finished?". Empty = neither the
@@ -36,7 +37,7 @@ const CFG = {
 
   CONTACT: "adel.chaouchorozco@cityu.edu.hk",
   COMPLETION_URL: "",
-  PILOT: true,
+  PILOT: false,
 };
 
 /* ---------------------------------------------------------------- session */
