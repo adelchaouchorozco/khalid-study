@@ -116,6 +116,7 @@ async function finish(){
   const toProlific = CFG.COMPLETION_URL && SESSION.recruitment === "prolific";
   state.part = (state.part || 0) + 1;
   const all = `${SESSION.pid}__p${String(state.part).padStart(2, "0")}_complete.csv`;
+  markCompletedHere();
   const res = await upload(all, DATA);
   const ok = res.ok;
   if (ok) clearSaved();
@@ -232,13 +233,14 @@ async function boot(){
   const prior = await alreadyCompleted();
   if (prior.complete){
     say(`<h4>You have already taken part</h4>
-         <p>Our records show this study has already been completed with your
-            participant id, so there is nothing more to do — and please do not
-            take it again, as repeated data cannot be used.</p>
+         <p>Our records show this study has already been completed
+            ${SESSION.recruitment === "prolific" ? "with your participant id" : "on this device"},
+            so there is nothing more to do — and please do not take it again,
+            as repeated data cannot be used.</p>
          <p>If you believe this is a mistake, please contact
             ${CFG.CONTACT ? `<a href="mailto:${CFG.CONTACT}">${CFG.CONTACT}</a>`
                           : "the researcher who sent you this link"},
-            quoting your participant id <strong class="mono">${SESSION.pid}</strong>.</p>`);
+            quoting your participant id <strong class="mono">${prior.pid || SESSION.pid}</strong>.</p>`);
     return;
   }
 

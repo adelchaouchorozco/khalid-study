@@ -22,7 +22,7 @@
    code and the generated task data aggressively; a participant running a
    stale mixture of the two is the kind of bug that is invisible until the
    data comes back wrong. */
-const ASSET_VERSION = "2026-09-24c";
+const ASSET_VERSION = "2026-09-24d";
 
 const CFG = {
   /* Where the data goes. DataPipe (pipe.jspsych.org) writes each snapshot
@@ -229,7 +229,26 @@ async function mirror(filename, csv){
    cannot run, the participant is let through. Locking everyone out because
    a service is down is worse than letting a rare duplicate through, and the
    duplicate is still visible in the data afterwards. */
+const DONE_KEY = "lexen:completed";
+
+/* Remember, in this browser, that the study was finished. On the open link
+   this is the only thing standing between a participant and a second run
+   (the server check below needs the mirror), so it is checked for every
+   arrival except Prolific, which blocks repeats itself and where a shared
+   computer could otherwise lock out a different Prolific participant. */
+function markCompletedHere(){
+  try { localStorage.setItem(DONE_KEY, JSON.stringify({ pid: SESSION.pid, at: new Date().toISOString() })); }
+  catch (e) {}
+}
+function completedHere(){
+  if (SESSION.recruitment === "prolific") return null;
+  try { return JSON.parse(localStorage.getItem(DONE_KEY) || "null"); }
+  catch (e) { return null; }
+}
+
 async function alreadyCompleted(){
+  const local = completedHere();
+  if (local) return { known: true, complete: true, pid: local.pid || SESSION.pid };
   if (!CFG.MIRROR_URL) return { known: false, complete: false };
   try {
     const res = await fetch(CFG.MIRROR_URL.replace(/\/$/, "")
