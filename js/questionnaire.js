@@ -150,6 +150,7 @@ function renderQuestionnaire(q, opts){
 
       const actions = document.createElement("div");
       actions.className = "actions";
+      let submitted = false;
       const next = document.createElement("button");
       next.textContent = page === q.pages.length - 1 ? "Next" : "Next";
       actions.appendChild(next);
@@ -176,11 +177,20 @@ function renderQuestionnaire(q, opts){
           missing[0].scrollIntoView({ block: "center" });
           return;
         }
+        /* A page is recorded exactly once. After the last page the screen
+           stays up while the next task downloads, and on a real connection
+           that takes long enough for a second click — which used to log the
+           whole page again. Found by a pilot on the live site: localhost
+           answers too fast for it to show. */
+        if (submitted) return;
+        submitted = true;
+        next.disabled = true;
         recordPage(items, page, answers);
         if (page < q.pages.length - 1){
           page++;
           paint();
         } else {
+          next.textContent = "Loading…";
           resolve(answers);
         }
       };
