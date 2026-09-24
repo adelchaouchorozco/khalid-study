@@ -22,7 +22,7 @@
    code and the generated task data aggressively; a participant running a
    stale mixture of the two is the kind of bug that is invisible until the
    data comes back wrong. */
-const ASSET_VERSION = "2026-09-24b";
+const ASSET_VERSION = "2026-09-24c";
 
 const CFG = {
   /* Where the data goes. DataPipe (pipe.jspsych.org) writes each snapshot
@@ -54,8 +54,16 @@ function resolvePid(){
   } catch (e) { return fresh; }
 }
 
+/* How this participant arrived. The same study runs on an open link now
+   and through Prolific later; this keeps the two cohorts separable in the
+   data without relying on the shape of an id. */
+const RECRUITMENT = params.get("PROLIFIC_PID") ? "prolific"
+                  : (params.get("participant") || params.get("pid")) ? "link-with-id"
+                  : "open-link";
+
 const SESSION = {
   pid: resolvePid(),
+  recruitment: RECRUITMENT,
   study: params.get("STUDY_ID") || "",
   session: params.get("SESSION_ID") || "",
   started: new Date().toISOString(),
@@ -137,6 +145,7 @@ let NODE_ROWS = [];       // rows for the node currently running
 function log(row){
   const full = Object.assign({
     participant: SESSION.pid,
+    recruitment: SESSION.recruitment,
     study: SESSION.study,
     session: SESSION.session,
     started: SESSION.started,

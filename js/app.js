@@ -113,6 +113,7 @@ async function step(){
 }
 
 async function finish(){
+  const toProlific = CFG.COMPLETION_URL && SESSION.recruitment === "prolific";
   state.part = (state.part || 0) + 1;
   const all = `${SESSION.pid}__p${String(state.part).padStart(2, "0")}_complete.csv`;
   const res = await upload(all, DATA);
@@ -125,7 +126,7 @@ async function finish(){
 
   say(`
     <h4>Thank you — the study is complete</h4>
-    <p>Your responses have been recorded. ${CFG.COMPLETION_URL
+    <p>Your responses have been recorded. ${toProlific
       ? "Please press the button below to register your participation."
       : "You can now close this tab."}</p>
     ${ok ? "" : `<p class="err">We could not send your responses automatically.
@@ -134,7 +135,7 @@ async function finish(){
        arm "${state.arm}", ${state.part} snapshot(s) uploaded.
        Set CFG.PILOT = false before running participants.</p>` : ""}
   `, [
-    ...(CFG.COMPLETION_URL ? [{ label: "Finish", onClick: () => location.href = CFG.COMPLETION_URL }] : []),
+    ...(toProlific ? [{ label: "Finish", onClick: () => location.href = CFG.COMPLETION_URL }] : []),
     ...(!ok || CFG.PILOT ? [{ label: "Download my data (CSV)", ghost: ok,
         onClick: () => downloadCSV(DATA, `${SESSION.pid}__ALL.csv`) }] : []),
   ]);
