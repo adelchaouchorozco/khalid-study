@@ -22,7 +22,7 @@
    code and the generated task data aggressively; a participant running a
    stale mixture of the two is the kind of bug that is invisible until the
    data comes back wrong. */
-const ASSET_VERSION = "2026-09-24d";
+const ASSET_VERSION = "2026-09-24e";
 
 const CFG = {
   /* Where the data goes. DataPipe (pipe.jspsych.org) writes each snapshot
@@ -33,7 +33,7 @@ const CFG = {
   /* Second sink: a Cloudflare Worker that mirrors every snapshot to R2 and
      answers "has this participant already finished?". Empty = neither the
      mirror nor the repeat check is active. See worker/README.md. */
-  MIRROR_URL: "",          // e.g. "https://khalid-study-data.<you>.workers.dev"
+  MIRROR_URL: "",          // e.g. "https://lexen-study-data.<you>.workers.dev"
 
   CONTACT: "adel.chaouchorozco@cityu.edu.hk",
   COMPLETION_URL: "",
@@ -48,8 +48,8 @@ function resolvePid(){
   if (fromURL) return fromURL;
   const fresh = "anon-" + Math.random().toString(36).slice(2, 9);
   try {
-    let v = localStorage.getItem("khalid:anon-id");
-    if (!v){ v = fresh; localStorage.setItem("khalid:anon-id", v); }
+    let v = localStorage.getItem("lexen:anon-id");
+    if (!v){ v = fresh; localStorage.setItem("lexen:anon-id", v); }
     return v;
   } catch (e) { return fresh; }
 }
@@ -69,7 +69,7 @@ const SESSION = {
   started: new Date().toISOString(),
   ua: navigator.userAgent,
 };
-const STORE = "khalid:" + SESSION.pid;
+const STORE = "lexen:" + SESSION.pid;
 
 const viewport = () => innerWidth + "x" + innerHeight;
 const screenSize = () => screen.width + "x" + screen.height;
