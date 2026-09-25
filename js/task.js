@@ -59,10 +59,35 @@ function zoneEl(z){
   return el;
 }
 
+/* Gorilla's randomise_trials column: rows sharing a value are shuffled
+   among the positions those rows occupy; blank rows stay where they are.
+   In this study it is set only on the 16 practice rows of each LexEn
+   task — the test items and LexTALE run in spreadsheet order. The order
+   is drawn once, so a practice repeat (jump_to_row) replays the same
+   sequence, as Gorilla does. */
+function gorillaOrder(rows){
+  const order = rows.map((_, i) => i);
+  const groups = {};
+  rows.forEach((r, i) => {
+    const g = String(r.randomise_trials ?? "").trim();
+    if (g) (groups[g] = groups[g] || []).push(i);
+  });
+  for (const pos of Object.values(groups)){
+    const picked = pos.slice();
+    for (let k = picked.length - 1; k > 0; k--){
+      const j = Math.floor(Math.random() * (k + 1));
+      [picked[k], picked[j]] = [picked[j], picked[k]];
+    }
+    pos.forEach((p, k) => { order[p] = picked[k]; });
+  }
+  return order;
+}
+
 async function runTask(task, opts){
-  const rows = task.rows;
   const state = opts.state || { i: 0, practiceCorrect: 0, practiceTotal: 0, vars: {} };
   if (!state.vars) state.vars = {};
+  if (!state.order) state.order = gorillaOrder(task.rows);
+  const rows = state.order.map(i => task.rows[i]);
 
   /* Keep the running totals a screen's embedded_data mapping asks for. */
   function accumulate(screen, correct){
@@ -210,7 +235,7 @@ async function runTask(task, opts){
 
       log({
         node: opts.nodeKey, task: task.title, display: row.display,
-        spreadsheet_row: state.i + 2,
+        spreadsheet_row: state.order[state.i] + 2,
         item: row.item ?? "", answer: correctAnswer ?? "",
         response, key_pressed: r.key || "",
         reaction_time: r.rt === null ? "" : r.rt,
@@ -251,7 +276,7 @@ async function runTask(task, opts){
 
       log({
         node: opts.nodeKey, task: task.title, display: row.display,
-        spreadsheet_row: state.i + 2,
+        spreadsheet_row: state.order[state.i] + 2,
         item: row.item ?? "", answer: correctAnswer ?? "",
         response: picked.label, key_pressed: "",
         reaction_time: rt, correct: isCorrect ? 1 : 0, timed_out: 0,
