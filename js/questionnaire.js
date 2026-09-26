@@ -76,7 +76,8 @@ function renderQuestionnaire(q, opts){
               : () => { answers[id] = o; };
             l.append(r, document.createTextNode(" "));
             const sp = document.createElement("span");
-            sp.innerHTML = renderContent(String(o));
+            /* display_options: corrected text on screen, original value in the data. */
+            sp.innerHTML = renderContent(String(it.display_options ? it.display_options[oi] : o));
             l.appendChild(sp);
             box.appendChild(l);
           });
