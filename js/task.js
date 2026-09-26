@@ -321,6 +321,10 @@ async function runTask(task, opts){
     if (cont){
       if (cont.type === "continue_keyboard"){
         await waitKey([" "], null);
+        /* Move on only once the space bar is released: the next page may
+           be a questionnaire whose focused Next button would otherwise be
+           pressed by this same key coming back up. */
+        await keyReleased(" ", 1000);
       } else {
         const el = zoneEl(cont);
         const b = document.createElement("button");

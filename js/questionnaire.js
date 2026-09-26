@@ -62,12 +62,18 @@ function renderQuestionnaire(q, opts){
         } else if (it.kind === "radio" || it.kind === "choice"){
           const box = document.createElement("div");
           box.className = "opts";
+          /* `multiple`: tick boxes, recorded as the ticked options joined
+             by "; " in the order shown. */
+          const picked = new Set();
           (it.options || []).forEach((o, oi) => {
             const l = document.createElement("label");
             l.className = "opt";
             const r = document.createElement("input");
-            r.type = "radio"; r.name = id; r.value = o;
-            r.onchange = () => { answers[id] = o; };
+            r.type = it.multiple ? "checkbox" : "radio"; r.name = id; r.value = o;
+            r.onchange = it.multiple
+              ? () => { r.checked ? picked.add(o) : picked.delete(o);
+                        answers[id] = (it.options || []).filter(x => picked.has(x)).join("; "); }
+              : () => { answers[id] = o; };
             l.append(r, document.createTextNode(" "));
             const sp = document.createElement("span");
             sp.innerHTML = renderContent(String(o));
@@ -220,7 +226,9 @@ function renderQuestionnaire(q, opts){
       items.forEach((it, idx) => {
         if (it.kind === "text") return;
         const id = `q${pageIdx}_${idx}`;
-        const label = (it.label || "").replace(/<[^>]+>/g, "").trim();
+        /* The data keep a question's original wording (log_label) when the
+           on-screen wording was corrected, so rows stay comparable. */
+        const label = (it.log_label || it.label || "").replace(/<[^>]+>/g, "").trim();
         if (it.kind === "grid"){
           (it.rows || []).forEach((rw, ri) => {
             log({ node: opts.nodeKey, task: q.title, display: "question",

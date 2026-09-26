@@ -22,7 +22,7 @@
    code and the generated task data aggressively; a participant running a
    stale mixture of the two is the kind of bug that is invisible until the
    data comes back wrong. */
-const ASSET_VERSION = "2026-09-25b";
+const ASSET_VERSION = "2026-09-26a";
 
 const CFG = {
   /* Where the data goes. DataPipe (pipe.jspsych.org) writes each snapshot
@@ -110,6 +110,23 @@ function codesFor(ch){
 }
 
 /* Resolves {key, rt, timedOut}. `valid` is a list of single characters. */
+/* Resolves when `key` is released (or after maxMs, in case the release
+   happened elsewhere). The release is swallowed so it cannot activate a
+   control that has just appeared. */
+function keyReleased(key, maxMs){
+  return new Promise(resolve => {
+    const done = e => {
+      if (e && e.key !== key && e.code !== "Space") return;
+      if (e) e.preventDefault();
+      document.removeEventListener("keyup", done, true);
+      clearTimeout(t);
+      resolve();
+    };
+    document.addEventListener("keyup", done, true);
+    const t = setTimeout(() => done(null), maxMs);
+  });
+}
+
 function waitKey(valid, timeoutMs){
   const codes = {};
   valid.forEach(k => codesFor(k).forEach(c => { codes[c] = k; }));
